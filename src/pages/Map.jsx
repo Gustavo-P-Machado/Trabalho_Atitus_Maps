@@ -1,24 +1,19 @@
 import { useEffect, useContext, useState } from "react";
 import { Navbar } from "../components";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader, useLoadScript } from "@react-google-maps/api";
 import { getPoints, postPoint } from '../services/mapService';
 import { useAuth } from "../contexts/AuthContext";
+
 
 const containerStyle = {
   width: "100%",
   height: "100%",
 };
 
-// Como pegar a posição atual do usuário?
-// Dica: use Geolocation API do navegador
-const center = {
-  lat: -23.55052,
-  lng: -46.633308,
-};
-
 export const Map = () => {
   const { token } = useAuth();
   const [markers, setMarkers] = useState([]);
+  const [center, setCenter] = useState({ lat: -27.1007, lng: -52.6152 }); // valor padrão
   
   // Substitua pela sua chave da API do Google Maps
   const { isLoaded } = useJsApiLoader({
@@ -36,6 +31,22 @@ export const Map = () => {
     }
     fetchMarkers();
   }, [token]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Erro ao obter localização:', error);
+        }
+      );
+    }
+  }, []);
 
   // Função para adicionar ponto ao clicar no mapa
   const handleMapClick = async (event) => {
