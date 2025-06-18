@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Navbar, Logo, Title, Input, Button } from "../components";
+import { Input, Button } from "../components";
 import { signIn } from "../services/authService";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,10 @@ export function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email || !senha) {
+      setErro("Preencha todos os campos");
+      return;
+    }
     setErro("");
     try {
       const token = await signIn(email, senha);
@@ -23,81 +28,90 @@ export function Login() {
     }
   };
 
-  return (
-    <>
-      <div className="max-w-md mx-auto p-4">
-        <div className="text-center">
-          <Logo />
-        </div>
+  const handleGoogleLogin = () => {
+    console.log("Login com Google não implementado.");
+  };
 
-        <div className="pt-6 pb-4">
-          <Title title="Efetue seu login" />
-        </div>
+  const handleLinkedinLogin = () => {
+    console.log("Login com LinkedIn não implementado.");
+  };
+
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="max-w-md w-full p-6 shadow border rounded-md">
+        <h1 className="text-xl font-bold text-center mb-6">Efetue seu login</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="pb-4">
-            <Input
-              label="Email"
-              placeholder="Digite seu email..."
+          <div className="mb-4">
+            <label className="block font-medium mb-1">E-mail</label>
+            <input
               type="email"
-              required
+              placeholder="Digite seu e-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-400 px-3 py-2 rounded"
+              required
             />
           </div>
-          <div className="pb-4">
-            <Input
-              label="Senha"
-              placeholder="Digite sua senha..."
+
+          <div className="mb-2">
+            <label className="block font-medium mb-1">Senha</label>
+            <input
               type="password"
-              required
+              placeholder="Digite sua senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              className="w-full border border-gray-400 px-3 py-2 rounded"
+              required
             />
           </div>
-          <div className="flex gap-4 items-center my-4">
+
+          <div className="text-sm text-left mb-4">
+            <Link to="/esqueci-senha" className="text-blue-600 underline">
+              Esqueci minha senha
+            </Link>
+          </div>
+
+          <div className="flex gap-3 mb-4">
             <button
               type="button"
-              className="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 hover:bg-gray-100 transition"
+              onClick={handleGoogleLogin}
+              className="flex items-center justify-center w-1/2 border border-black text-black bg-white rounded py-2 font-medium gap-2"
             >
-              {/* Ícone Google */}
-              <svg width="20" height="20" viewBox="0 0 48 48">
-                <g>
-                  <path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.7 33.1 30.1 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3 12.9 3 4 11.9 4 23s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.3-4z"/>
-                  <path fill="#34A853" d="M6.3 14.7l7 5.1C15.5 17.1 19.4 14 24 14c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3c-7.2 0-13.3 4.1-16.7 10.1z"/>
-                  <path fill="#FBBC05" d="M24 44c5.6 0 10.6-1.9 14.5-5.2l-6.7-5.5c-2 1.4-4.6 2.2-7.8 2.2-6.1 0-11.3-4.1-13.2-9.6l-7 5.4C6.7 39.1 14.1 44 24 44z"/>
-                  <path fill="#EA4335" d="M44.5 20H24v8.5h11.7c-1.1 3.1-4.2 5.5-7.7 5.5-2.2 0-4.2-.7-5.7-2l-7 5.4C17.4 41.9 20.5 44 24 44c5.6 0 10.6-1.9 14.5-5.2l-6.7-5.5c-2 1.4-4.6 2.2-7.8 2.2-6.1 0-11.3-4.1-13.2-9.6l-7 5.4C6.7 39.1 14.1 44 24 44z"/>
-                </g>
-              </svg>
-              Entrar com Google
+              <FaGoogle size={16} />
+              Google
             </button>
+
             <button
               type="button"
-              className="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 hover:bg-gray-100 transition"
+              onClick={handleLinkedinLogin}
+              className="flex items-center justify-center w-1/2 border border-black text-black bg-white rounded py-2 font-medium gap-2"
             >
-              {/* Ícone LinkedIn */}
-              <svg width="20" height="20" viewBox="0 0 32 32">
-                <path fill="#0077B5" d="M29 0H3C1.3 0 0 1.3 0 3v26c0 1.7 1.3 3 3 3h26c1.7 0 3-1.3 3-3V3c0-1.7-1.3-3-3-3zM9.4 27H5.3V12h4.1v15zm-2-17.1c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zm19.6 17.1h-4.1v-7.2c0-1.7-.6-2.8-2.1-2.8-1.1 0-1.7.7-2 1.4-.1.3-.1.7-.1 1.1V27h-4.1s.1-13.7 0-15h4.1v2.1c.5-.8 1.4-2 3.5-2 2.6 0 4.5 1.7 4.5 5.3V27z"/>
-              </svg>
-              Entrar com LinkedIn
+              <FaLinkedinIn size={16} />
+              LinkedIn
             </button>
           </div>
-          {erro && <p style={{ color: "red" }}>{erro}</p>}
 
-          <div className="text-center pt-4">
-            <Button type="submit">Acessar</Button>
+          {erro && (
+            <p className="text-red-600 text-sm font-semibold text-center mb-4">
+              {erro}
+            </p>
+          )}
+
+          <div className="mb-4">
+            <Button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
+              Acessar
+            </Button>
           </div>
         </form>
 
-        <div className="text-center pt-8">
-          <Link
-            to="/register"
-            className="text-blue-600 hover:underline"
-          >
-            Não possui uma conta? <strong>Registre-se</strong>
+        <div className="text-center text-sm">
+          Não possui uma conta?{" "}
+          <Link to="/register" className="text-blue-600 underline">
+            Registre-se
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }
